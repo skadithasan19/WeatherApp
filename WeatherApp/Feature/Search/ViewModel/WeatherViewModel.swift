@@ -55,7 +55,7 @@ class WeatherViewModel: ObservableObject, WeatherServiceProtocol {
     /// Save recently selected  location
     ///  - Parameter placemark: selected item saving city, state,latitude and longitude to coredata
     ///
-
+    
     private func addItem(placemark: CLPlacemark) {
         let viewContext = persistenceController.container.viewContext
         let newItem = Item(context: viewContext)
@@ -67,13 +67,11 @@ class WeatherViewModel: ObservableObject, WeatherServiceProtocol {
         do {
             try viewContext.save()
         } catch {
-            // Replace this implementation with code to handle the error appropriately.
-            // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
             let nsError = error as NSError
             fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
         }
     }
-
+    
     /// Default weather detail by location when service is on
     func getDefaultCoordinate() {
         LocationManager.shared.requestLocationAuthorizationCallback = { [weak self] (status, coordinateObject) in
@@ -95,13 +93,12 @@ class WeatherViewModel: ObservableObject, WeatherServiceProtocol {
         self.getWeatherDetailBy(lat: lat, lon: lon)
             .receive(on: DispatchQueue.main, options: nil)
             .sink { result in
-            if case .failure(let error as NSError) = result {
-              print("Error with request: \(error.localizedDescription)")
-             // self.state = .failed(APIError.decodingError("NO DISCOUNT CODE AVAILABLE"))
-            }
-        } receiveValue: { [weak self] weatherObject in
-            self?.weatherObject = weatherObject
-        }.store(in: &cancellables)
+                if case .failure(let error as NSError) = result {
+                    print("Error with request: \(APIError.decodingError(error: error))")
+                }
+            } receiveValue: { [weak self] weatherObject in
+                self?.weatherObject = weatherObject
+            }.store(in: &cancellables)
     }
     
     /// Weather detaill
@@ -110,8 +107,7 @@ class WeatherViewModel: ObservableObject, WeatherServiceProtocol {
     func getWeatherDetail(by city: String) {
         self.getWeatherDetail(city: city).sink { result in
             if case .failure(let error as NSError) = result {
-              print("Error with request: \(error.localizedDescription)")
-             // self.state = .failed(APIError.decodingError("NO DISCOUNT CODE AVAILABLE"))
+                print("Error with request: \(APIError.decodingError(error: error))")
             }
         } receiveValue: { [weak self] weatherObject in
             self?.weatherObject = weatherObject
@@ -125,8 +121,7 @@ class WeatherViewModel: ObservableObject, WeatherServiceProtocol {
     func getWeatherDetail(by city: String, state: String) {
         self.getWeatherDetail(city: city).sink { result in
             if case .failure(let error as NSError) = result {
-              print("Error with request: \(error.localizedDescription)")
-             // self.state = .failed(APIError.decodingError("NO DISCOUNT CODE AVAILABLE"))
+                print("Error with request: \(APIError.decodingError(error: error))")
             }
         } receiveValue: { [weak self] weatherObject in
             self?.weatherObject = weatherObject
@@ -141,13 +136,12 @@ class WeatherViewModel: ObservableObject, WeatherServiceProtocol {
     func getWeatherDetail(by city: String, state: String, country: String) {
         self.getWeatherDetail(city: city, state: state, country: country)
             .sink { result in
-            if case .failure(let error as NSError) = result {
-              print("Error with request: \(error.localizedDescription)")
-             // self.state = .failed(APIError.decodingError("NO DISCOUNT CODE AVAILABLE"))
+                if case .failure(let error as NSError) = result {
+                    print("Error with request: \(APIError.decodingError(error: error))")
+                }
+            } receiveValue: { [weak self] weatherObject in
+                self?.weatherObject = weatherObject
             }
-        } receiveValue: { [weak self] weatherObject in
-            self?.weatherObject = weatherObject
-        }
-        .store(in: &cancellables)
+            .store(in: &cancellables)
     }
 }
