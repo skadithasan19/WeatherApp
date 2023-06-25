@@ -62,7 +62,7 @@ struct AddressSearchView: View {
                     }
                 }
             }
-            .navigationBarTitle(Text("Address search"), displayMode: .inline)
+            .navigationBarTitle(Text("Address"), displayMode: .inline)
         }
     }
     

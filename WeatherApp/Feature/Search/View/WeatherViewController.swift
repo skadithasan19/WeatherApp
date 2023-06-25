@@ -56,7 +56,7 @@ class WeatherViewController: UIViewController {
     
     @IBOutlet weak var statusIcon: UIImageView!
     
-    var viewModel: WeatherViewModel?
+    private var viewModel: WeatherViewModel?
     
     private var cancellables : Set<AnyCancellable> = []
     
@@ -74,26 +74,27 @@ class WeatherViewController: UIViewController {
         self.viewModel?.$weatherObject
             .receive(on: RunLoop.main, options: nil)
             .sink { [weak self] weather in
-                self?.addressLbl.text = "\(self?.viewModel?.address.cityName ?? ""), \(self?.viewModel?.address.stateName ?? "")"
-                self?.temperatureLbl.text = weather?.main?.temp.convertTemp()
-                self?.highestTmpLbl.text = "↑" + (weather?.main?.temp_max.convertTemp() ?? "")
-                self?.lowestTmpLbl.text = "↓" + (weather?.main?.temp_min.convertTemp() ?? "")
-                self?.descriptionLabel.text = weather?.weather?.first?.description.uppercased()
+                guard let self = self else { return }
+                self.addressLbl.text = "\(self.viewModel?.address.cityName ?? ""), \(self.viewModel?.address.stateName ?? "")"
+                self.temperatureLbl.text = weather?.main?.temp.convertTemp()
+                self.highestTmpLbl.text = "↑" + (weather?.main?.temp_max.convertTemp() ?? "")
+                self.lowestTmpLbl.text = "↓" + (weather?.main?.temp_min.convertTemp() ?? "")
+                self.descriptionLabel.text = weather?.weather?.first?.description.uppercased()
                 
-                self?.humidityLbl.text = "\(weather?.main?.humidity ?? 0)%"
-                self?.feelsLikeLbl.text = weather?.main?.feels_like.convertTemp()
-                self?.pressureLbl.text = "\(weather?.main?.pressure ?? 0)"
-                self?.WindLbl.text = "\(((weather?.wind?.speed ?? 0) * 2.237).roundedBy(toPlaces: 2))"
-                self?.Visibility.text = weather?.visibility?.convertDistance()
+                self.humidityLbl.text = "\(weather?.main?.humidity ?? 0)%"
+                self.feelsLikeLbl.text = weather?.main?.feels_like.convertTemp()
+                self.pressureLbl.text = "\(weather?.main?.pressure ?? 0)"
+                self.WindLbl.text = "\(((weather?.wind?.speed ?? 0) * 2.237).roundedBy(toPlaces: 2))"
+                self.Visibility.text = weather?.visibility?.convertDistance()
                 if let sys = weather?.sys {
                     let sunset = Date(timeIntervalSince1970: TimeInterval(sys.sunset))
-                    self?.sunsetLbl.text = sunset.getFormattedDate(format: "hh:mm a")
+                    self.sunsetLbl.text = sunset.getFormattedDate(format: "hh:mm a")
                     let sunrise = Date(timeIntervalSince1970: TimeInterval(sys.sunrise))
-                    self?.sunriseLbl.text = sunrise.getFormattedDate(format: "hh:mm a")
+                    self.sunriseLbl.text = sunrise.getFormattedDate(format: "hh:mm a")
                 }
                 
                 if let url = weather?.weather?.first?.url {
-                    self?.statusIcon.downloaded(from: url)
+                    ImageLoader.shared.loadImage(from: url).assign(to: \.image, on: self.statusIcon).store(in: &self.cancellables)
                 }
             }.store(in: &cancellables)
     }

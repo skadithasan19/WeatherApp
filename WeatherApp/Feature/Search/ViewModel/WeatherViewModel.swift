@@ -27,10 +27,10 @@ class WeatherViewModel: ObservableObject, WeatherServiceProtocol {
     }
     
     init(apiSession: APISessionProtocol = APISession(),
-         address: Item) {
+         address: Item? = nil) {
         self.apiSession = apiSession
-        self.address = Address(cityName: address.city ?? "", stateName: address.state ?? "", country: "")
-        self.getWeatherDetail(lat: address.latitude, lon: address.longitude)
+        self.address = Address(cityName: address?.city ?? "", stateName: address?.state ?? "", country: "")
+        self.getWeatherDetail(lat: address?.latitude ?? 0.0, lon: address?.longitude ?? 0.0)
     }
     
     /// extracting selecting results and making it usable city and state name
