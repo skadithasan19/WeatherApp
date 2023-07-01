@@ -9,7 +9,7 @@ import Foundation
 import UIKit.UIImage
 import Combine
 
-// Declares in-memory image cache
+// Declares in-memory image cache [This is something followed from stackoverflow]
 protocol ImageCacheType: AnyObject {
     // Returns the image associated with a given url
     func image(for url: URL) -> UIImage?
@@ -75,7 +75,6 @@ public final class ImageCache: ImageCacheType {
     public struct Config {
         public let countLimit: Int
         public let memoryLimit: Int
-
         public static let defaultConfig = Config(countLimit: 100, memoryLimit: 1024 * 1024 * 100) // 100 MB
     }
 
